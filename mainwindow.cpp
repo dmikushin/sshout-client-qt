@@ -476,6 +476,7 @@ void MainWindow::remove_offline_user_items(const QSet<QString> &keep_set) {
 	//qDebug() << items;
 	foreach(QListWidgetItem *i, items) {
 		if(keep_set.contains(i->text())) continue;
+		if(ui->checkBox_private_message->isChecked() && ui->listWidget_online_users->currentItem() == i) ui->checkBox_private_message->setChecked(false);
 		delete (QList<UserIdAndHostName> *)i->data((int)Qt::UserRole).value<void *>();
 		delete i;
 	}
