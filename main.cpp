@@ -56,7 +56,10 @@ QString config_dir() {
 #ifndef Q_OS_WINCE
 	}
 	QString in_home = QDir::homePath() + "/.sshout";
-	if(!QFile::exists(in_home)) mkdir(in_home.toLocal8Bit().data(), 0750);
+	if(!QFile::exists(in_home)) {
+		QByteArray ba = in_home.toLocal8Bit();
+		mkdir(ba.data(), 0750);
+	}
 	return in_home;
 #endif
 }
