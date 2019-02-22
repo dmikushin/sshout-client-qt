@@ -48,7 +48,10 @@ bool MessageLog::open(const QString &path) {
 		return false;
 	}
 	lock_file->close();
+	QFile db_file(path);
+	bool need_chmod = !db_file.exists();
 	if(!database.open()) return false;
+	if(need_chmod) db_file.setPermissions(QFile::ReadUser | QFile::WriteUser);
 	QString sql_create_table("CREATE TABLE IF NOT EXISTS messages ("
 				 "id INTEGER PRIMARY KEY AUTOINCREMENT,"
 				 "receive_time DATETIME,"

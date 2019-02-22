@@ -300,6 +300,7 @@ void MainWindow::print_image(const QByteArray &data, QByteArray &file_name_buffe
 			ui->chat_area->appendPlainText(tr("[Failed to save image to disk, %1]").arg(image_file.errorString()));
 			return;
 		}
+		image_file.setPermissions(QFile::ReadUser | QFile::WriteUser);
 		if(image_file.write(data) < data.length()) {
 			ui->chat_area->appendPlainText(tr("[File %1 short write]").arg(image_file_name));
 			image_file.close();
