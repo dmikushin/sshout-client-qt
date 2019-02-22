@@ -38,6 +38,7 @@ bool MessageLog::open(const QString &path) {
 			if(pid && kill(pid, 0) == 0) {
 #else
 			HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
+			// The Windows API design is shit!
 			if(handle != INVALID_HANDLE_VALUE && handle) {
 				CloseHandle(handle);
 #endif
