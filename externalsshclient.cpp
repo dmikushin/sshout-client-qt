@@ -80,9 +80,8 @@ bool ExternalSSHClient::connect(const QString &host, quint16 port, const QString
 	ssh_args << "-T";
 	if(!ssh_args_extra.isEmpty()) ssh_args << ssh_args_extra;
 	if(!command.isEmpty()) ssh_args << "--" << command;
-	ssh_process->start(ssh_program_path, ssh_args, QIODevice::ReadWrite);
-	//QIODevice::open(QIODevice::ReadWrite | QIODevice::Unbuffered);
 	QIODevice::open(QIODevice::ReadWrite);
+	ssh_process->start(ssh_program_path, ssh_args, QIODevice::ReadWrite);
 	return true;
 }
 

@@ -7,6 +7,10 @@
 #include <QtCore/QCoreApplication>
 #include <signal.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 MessageLog::MessageLog()  {
 	//database = new QSqlDatabase;
 	//QSQLiteDriver *driver = new QSQLiteDriver;
@@ -30,7 +34,13 @@ bool MessageLog::open(const QString &path) {
 		lock_file->close();
 		if(!content.isEmpty()) {
 			int pid = content.toInt();
+#ifndef Q_OS_WIN
 			if(pid && kill(pid, 0) == 0) {
+#else
+			HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
+			if(handle != INVALID_HANDLE_VALUE && handle) {
+				CloseHandle(handle);
+#endif
 				qWarning("MessageLog::open: database file is locked by process %d via lock file '%s'", pid, lock_path_ba.data());
 				return false;
 			}

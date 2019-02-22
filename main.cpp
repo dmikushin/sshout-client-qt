@@ -57,8 +57,13 @@ QString config_dir() {
 	}
 	QString in_home = QDir::homePath() + "/.sshout";
 	if(!QFile::exists(in_home)) {
+#ifdef Q_OS_WIN
+		std::wstring wcs = in_home.toStdWString();
+		CreateDirectoryW(wcs.c_str(), NULL);
+#else
 		QByteArray ba = in_home.toLocal8Bit();
 		mkdir(ba.data(), 0750);
+#endif
 	}
 	return in_home;
 #endif
