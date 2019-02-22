@@ -381,6 +381,13 @@ void MainWindow::send_hello() {
 	*data_stream << version;
 }
 
+QString MainWindow::get_target_user() {
+	if(!ui->checkBox_private_message->isChecked()) return QString("GLOBAL");
+	QListWidgetItem *item = ui->listWidget_online_users->currentItem();
+	if(!item) return QString("GLOBAL");
+	return item->text();
+}
+
 void MainWindow::send_message(const QString &to_user, quint8 message_type, const QByteArray &message) {
 	if(!ssh_client->is_connected()) {
 		ui->statusbar->showMessage(tr("Cannot send message, server is not connected"));
@@ -414,9 +421,7 @@ void MainWindow::send_message() {
 	QByteArray message_bytes = message.toUtf8();
 
 	ui->statusbar->showMessage(tr("Sending message"), 1000);
-	// TODO: get user name from current selection of user list
-	//QString ui->listWidget_online_users->currentItem()
-	send_message("GLOBAL", use_html ? SSHOUT_API_MESSAGE_TYPE_RICH : SSHOUT_API_MESSAGE_TYPE_PLAIN, message_bytes);
+	send_message(get_target_user(), use_html ? SSHOUT_API_MESSAGE_TYPE_RICH : SSHOUT_API_MESSAGE_TYPE_PLAIN, message_bytes);
 
 	last_message_html = ui->textEdit_message_to_send->toHtml();
 	ui->textEdit_message_to_send->clear();
@@ -448,7 +453,7 @@ void MainWindow::send_image(const QImage &image) {
 		return;
 	}
 	buffer.close();
-	send_message("GLOBAL", SSHOUT_API_MESSAGE_TYPE_IMAGE, data);
+	send_message(get_target_user(), SSHOUT_API_MESSAGE_TYPE_IMAGE, data);
 }
 
 void MainWindow::add_user_item(const QString &user_name, QList<UserIdAndHostName> *logins) {
@@ -500,7 +505,7 @@ void MainWindow::send_request_online_users() {
 }
 
 void MainWindow::update_user_state(const QString &user, quint8 state) {
-	ui->chat_area->appendPlainText(tr("%1 is %2\n").arg(user).arg(state ? tr("joined") : tr("left")));
+	ui->chat_area->appendPlainText(tr("%1 has %2\n").arg(user).arg(state ? tr("joined") : tr("left")));
 	if(state) {
 		send_request_online_users();
 		timer->start();
@@ -955,4 +960,19 @@ void MainWindow::send_image_from_clipboard() {
 		return;
 	}
 	send_image(image);
+}
+
+void MainWindow::select_user(const QString &name) {
+	ui->checkBox_private_message->setEnabled(true);
+	if(!ui->checkBox_private_message->isChecked()) return;
+	ui->label_message_to->setText(tr("Message to %1:").arg(name));
+}
+
+void MainWindow::set_send_private_message(bool v) {
+	QListWidgetItem *item;
+	if(v && (item = ui->listWidget_online_users->currentItem())) {
+		ui->label_message_to->setText(tr("Message to %1:").arg(item->text()));
+	} else {
+		ui->label_message_to->setText(tr("Broadcast Message:"));
+	}
 }

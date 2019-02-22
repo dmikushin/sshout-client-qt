@@ -38,7 +38,16 @@
        </size>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -131,6 +140,19 @@
      </item>
      <item>
       <widget class="QListWidget" name="listWidget_online_users"/>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_private_message">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Private messages will be sent to selected user if checked</string>
+       </property>
+       <property name="text">
+        <string>&amp;PM to selected user</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -470,6 +492,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>checkBox_private_message</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_send_private_message(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>293</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_online_users</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>select_user(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>293</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>set_send_message_on_enter(bool)</slot>
@@ -483,5 +537,7 @@
   <slot>show_chat_area_context_menu(QPoint)</slot>
   <slot>show_sessions_of_user(QListWidgetItem*)</slot>
   <slot>send_image_from_clipboard()</slot>
+  <slot>set_send_private_message(bool)</slot>
+  <slot>select_user(QString)</slot>
  </slots>
 </ui>

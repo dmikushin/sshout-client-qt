@@ -70,6 +70,7 @@ private:
 	void print_image(const QByteArray &, QByteArray &);
 	void print_message(const QDateTime &t, const QString &, const QString &, quint8, const QByteArray &);
 	void send_hello();
+	QString get_target_user();
 	void send_message(const QString &, quint8, const QByteArray &);
 	void send_image(const QImage &);
 	void save_ui_layout();
@@ -129,6 +130,8 @@ private slots:
 	//void show_session_list_context_menu(const QPoint &);
 	void send_image_from_clipboard();
 	//void show_about_qt();
+	void select_user(const QString &);
+	void set_send_private_message(bool);
 };
 
 #endif // MAINWINDOW_H
