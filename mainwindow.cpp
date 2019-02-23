@@ -331,10 +331,6 @@ void MainWindow::print_tag(const QString &time, const QString &from, const QStri
 	QTextFormat fmt;
 	QColor precol = ui->chat_area->textColor();
 
-	ui->chat_area->insertPlainText(time);
-
-	ui->chat_area->insertPlainText(" ");
-
 	if(!my_user_name.isEmpty() && from == my_user_name) {
 		ui->chat_area->setTextColor(QColor(0x39, 0xB5, 0x4A));
 	} else {
@@ -356,7 +352,9 @@ void MainWindow::print_tag(const QString &time, const QString &from, const QStri
 		ui->chat_area->setTextColor(precol);
 	}
 
-	ui->chat_area->insertPlainText(":\n");
+	ui->chat_area->insertPlainText("  ");
+	ui->chat_area->insertPlainText(time);
+	ui->chat_area->insertPlainText("\n");
 }
 
 void MainWindow::print_message(const QDateTime &dt, const QString &msg_from, const QString &msg_to, quint8 msg_type, const QByteArray &message) {
