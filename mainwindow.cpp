@@ -542,6 +542,9 @@ void MainWindow::update_user_state(const QString &user, quint8 state) {
 		//qDebug() << items;
 		if(items.isEmpty()) return;
 		Q_ASSERT(items.count() == 1);
+		if(ui->checkBox_private_message->isChecked() && ui->listWidget_online_users->currentItem() == items[0]) {
+			ui->checkBox_private_message->setChecked(false);
+		}
 		delete (QList<UserIdAndHostName> *)items[0]->data((int)Qt::UserRole).value<void *>();
 		delete items[0];
 	}
