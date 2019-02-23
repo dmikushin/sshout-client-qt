@@ -328,7 +328,6 @@ void MainWindow::print_image(const QByteArray &data, QByteArray &file_name_buffe
 }
 
 void MainWindow::print_tag(const QString &time, const QString &from, const QString &to) {
-	/* time from[ @to]: */
 	QTextFormat fmt;
 	QColor precol = ui->chat_area->textColor();
 
@@ -347,15 +346,13 @@ void MainWindow::print_tag(const QString &time, const QString &from, const QStri
 	ui->chat_area->insertPlainText(" ");
 
 	if(!to.isEmpty() && to != "GLOBAL") {
-		//ui->chat_area->setTextColor(precol);
-		const QColor tagToColor(0xAD, 0x7F, 0xA8);
+		ui->chat_area->insertPlainText(tr(" to "));	// XXX: not friendly to translators
 		if(!my_user_name.isEmpty() && to == my_user_name) {
 			ui->chat_area->setTextColor(QColor(0x39, 0xB5, 0x4A));
-			qDebug() << to;
 		} else {
 			ui->chat_area->setTextColor(QColor(0x34, 0x65, 0xA4));
 		}
-		ui->chat_area->insertPlainText("@" + to);
+		ui->chat_area->insertPlainText(to);
 		ui->chat_area->setTextColor(precol);
 	}
 
