@@ -55,6 +55,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 #endif
 //#include <QtGui/QRubberBand>
 #include <stdio.h>
@@ -326,11 +327,43 @@ void MainWindow::print_image(const QByteArray &data, QByteArray &file_name_buffe
 	ui->chat_area->setTextCursor(cursor);
 }
 
+void MainWindow::print_tag(const QString &time, const QString &from, const QString &to) {
+	/* time from[ @to]: */
+	QTextFormat fmt;
+	QColor precol = ui->chat_area->textColor();
+
+	ui->chat_area->insertPlainText(time);
+
+	ui->chat_area->insertPlainText(" ");
+
+	if(!my_user_name.isEmpty() && from == my_user_name) {
+		ui->chat_area->setTextColor(QColor(0x39, 0xB5, 0x4A));
+	} else {
+		ui->chat_area->setTextColor(QColor(0x34, 0x65, 0xA4));
+	}
+	ui->chat_area->insertPlainText(from);
+	ui->chat_area->setTextColor(precol);
+
+	ui->chat_area->insertPlainText(" ");
+
+	if(!to.isEmpty() && to != "GLOBAL") {
+		//ui->chat_area->setTextColor(precol);
+		const QColor tagToColor(0xAD, 0x7F, 0xA8);
+		if(!my_user_name.isEmpty() && to == my_user_name) {
+			ui->chat_area->setTextColor(QColor(0x39, 0xB5, 0x4A));
+			qDebug() << to;
+		} else {
+			ui->chat_area->setTextColor(QColor(0x34, 0x65, 0xA4));
+		}
+		ui->chat_area->insertPlainText("@" + to);
+		ui->chat_area->setTextColor(precol);
+	}
+
+	ui->chat_area->insertPlainText(":\n");
+}
+
 void MainWindow::print_message(const QDateTime &dt, const QString &msg_from, const QString &msg_to, quint8 msg_type, const QByteArray &message) {
 	QTime t = dt.time();
-	QString tag = (msg_to.isEmpty() || msg_to == QString("GLOBAL")) ?
-		QString("%1 %2").arg(msg_from).arg(t.toString("H:mm:ss")) :
-		tr("%1 to %2 %3").arg(msg_from).arg(msg_to).arg(t.toString("H:mm:ss"));
 	QScrollBar *chat_area_scroll_bar = ui->chat_area->verticalScrollBar();
 	int current_scroll = chat_area_scroll_bar->value();
 	bool should_scroll = current_scroll >= chat_area_scroll_bar->maximum();
@@ -338,17 +371,16 @@ void MainWindow::print_message(const QDateTime &dt, const QString &msg_from, con
 	cursor.movePosition(QTextCursor::End);
 	ui->chat_area->setTextCursor(cursor);
 	ui->chat_area->insertPlainText("\n");
+	print_tag(t.toString("H:mm:ss"), msg_from, msg_to);
 	QByteArray image_file_name;
 	switch(msg_type) {
 		case SSHOUT_API_MESSAGE_TYPE_PLAIN:
-			ui->chat_area->insertPlainText(tag + "\n" + QString::fromUtf8(message));
+			ui->chat_area->insertPlainText(QString::fromUtf8(message));
 			break;
 		case SSHOUT_API_MESSAGE_TYPE_RICH:
-			ui->chat_area->insertPlainText(tag + "\n");
 			ui->chat_area->insertHtml(QString::fromUtf8(message));
 			break;
 		case SSHOUT_API_MESSAGE_TYPE_IMAGE:
-			ui->chat_area->insertPlainText(tag + "\n");
 			print_image(message, image_file_name);
 			break;
 	}

@@ -82,6 +82,7 @@ private:
 	void apply_chat_area_config();
 	void update_window_title();
 	void reset_unread_message_count();
+	void print_tag(const QString &, const QString &, const QString &);
 	Ui::MainWindow *ui;
 	bool use_internal_ssh_library;
 	SSHClient *ssh_client;
