@@ -38,16 +38,7 @@
        </size>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
@@ -132,16 +123,6 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="label_on_users">
-       <property name="text">
-        <string>On-line Users:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QListWidget" name="listWidget_online_users"/>
-     </item>
-     <item>
       <widget class="QCheckBox" name="checkBox_private_message">
        <property name="enabled">
         <bool>false</bool>
@@ -153,6 +134,9 @@
         <string>&amp;PM to selected user</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="listWidget_online_users"/>
      </item>
     </layout>
    </widget>
