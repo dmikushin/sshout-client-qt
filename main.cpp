@@ -18,7 +18,12 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef Q_OS_WIN
+#include <dirent.h>
+#define mkdir(path,mode) _mkdir(path)
+#else
 #include <sys/stat.h>
+#endif
 #include <time.h>
 #if QT_VERSION < 0x050000
 #include <QtGui/QApplication>
@@ -57,13 +62,8 @@ QString config_dir() {
 	}
 	QString in_home = QDir::homePath() + "/.sshout";
 	if(!QFile::exists(in_home)) {
-#ifdef Q_OS_WIN
-		std::wstring wcs = in_home.toStdWString();
-		CreateDirectoryW(wcs.c_str(), NULL);
-#else
 		QByteArray ba = in_home.toLocal8Bit();
 		mkdir(ba.data(), 0750);
-#endif
 	}
 	return in_home;
 #endif
