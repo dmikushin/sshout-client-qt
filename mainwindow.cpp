@@ -339,8 +339,6 @@ void MainWindow::print_tag(const QString &time, const QString &from, const QStri
 	ui->chat_area->insertPlainText(from);
 	ui->chat_area->setTextColor(precol);
 
-	ui->chat_area->insertPlainText(" ");
-
 	if(!to.isEmpty() && to != "GLOBAL") {
 		ui->chat_area->insertPlainText(tr(" to "));	// XXX: not friendly to translators
 		if(!my_user_name.isEmpty() && to == my_user_name) {
