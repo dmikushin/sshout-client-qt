@@ -32,7 +32,7 @@
 #include <QtCore/QTranslator>
 #include <QtCore/QDebug>
 #ifdef Q_OS_WIN
-#include <dirent.h>
+#include <direct.h>
 #define mkdir(path,mode) _mkdir(path)
 #else
 #include <sys/stat.h>
