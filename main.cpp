@@ -18,12 +18,6 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef Q_OS_WIN
-#include <dirent.h>
-#define mkdir(path,mode) _mkdir(path)
-#else
-#include <sys/stat.h>
-#endif
 #include <time.h>
 #if QT_VERSION < 0x050000
 #include <QtGui/QApplication>
@@ -37,6 +31,12 @@
 #include <QtCore/QDir>
 #include <QtCore/QTranslator>
 #include <QtCore/QDebug>
+#ifdef Q_OS_WIN
+#include <dirent.h>
+#define mkdir(path,mode) _mkdir(path)
+#else
+#include <sys/stat.h>
+#endif
 
 #define CONFIG_FILE_NAME "sshout.cfg"
 
