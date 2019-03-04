@@ -88,13 +88,16 @@ MainWindow::MainWindow(QWidget *parent, QSettings *config, const QString &host, 
 	int at_i = host.indexOf('@');
 	if(at_i != -1) this->host.remove(0, at_i + 1);
 	ssh_user = DEFAULT_SSH_USER_NAME;
-	connect(ssh_client, SIGNAL(state_changed(SSHClient::SSHState)), SLOT(ssh_state_change(SSHClient::SSHState)));
-	connect(ssh_client, SIGNAL(readyRead()), SLOT(read_ssh()));
+	data_stream = NULL;
+	message_log = NULL;
+	timer = NULL;
 	if(!apply_ssh_config()) {
 		change_server();
 		QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
 		return;
 	}
+	connect(ssh_client, SIGNAL(state_changed(SSHClient::SSHState)), SLOT(ssh_state_change(SSHClient::SSHState)));
+	connect(ssh_client, SIGNAL(readyRead()), SLOT(read_ssh()));
 	if(!use_internal_ssh_library) {
 		ExternalSSHClient *extern_ssh_client = (ExternalSSHClient *)ssh_client;
 		extern_ssh_client->register_ready_read_stderr_slot(this, SLOT(read_ssh_stderr()));
@@ -139,10 +142,10 @@ MainWindow::MainWindow(QWidget *parent, QSettings *config, const QString &host, 
 	connect(ui->chat_area->verticalScrollBar(), SIGNAL(valueChanged(int)), SLOT(reset_unread_message_count_from_chat_area_vertical_scroll_bar(int)));
 	unread_message_count = 0;
 	connect(ui->action_about_qt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+	apply_chat_area_config();
 	ready = true;
 	setAcceptDrops(true);
 	update_window_title();
-	apply_chat_area_config();
 }
 
 MainWindow::~MainWindow()
@@ -233,7 +236,7 @@ void MainWindow::save_ui_layout() {
 void MainWindow::closeEvent(QCloseEvent *e) {
 	need_reconnect = false;
 	ssh_client->disconnect();
-	message_log->close();
+	if(message_log) message_log->close();
 	if(ready) save_ui_layout();
 	e->accept();
 }
