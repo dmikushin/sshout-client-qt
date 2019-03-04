@@ -18,6 +18,7 @@ public:
 	virtual void disconnect() = 0;
 	virtual void set_known_hosts(const QStringList &) = 0;
 	virtual void set_identify_file(const QString &) = 0;
+	virtual void set_server_alive_interval(int) = 0;
 	virtual void set_reconnect_interval(int) = 0;
 	virtual SSHState state() = 0;
 	virtual bool is_connected() = 0;

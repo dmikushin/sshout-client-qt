@@ -24,6 +24,7 @@ ExternalSSHClient::ExternalSSHClient(QObject *parent, const QString &ssh_program
 	this->ssh_program_path = ssh_program_path;
 	ssh_process = new QProcess(this);
 	environment = ssh_process->systemEnvironment().toSet();
+	server_alive_interval = -1;
 	reconnect_interval = -1;
 	temp_known_hosts_file = NULL;
 	QObject::connect(ssh_process, SIGNAL(stateChanged(QProcess::ProcessState)), SLOT(from_process_state_change(QProcess::ProcessState)));
@@ -58,7 +59,7 @@ bool ExternalSSHClient::connect(const QString &host, quint16 port, const QString
 	ssh_args.clear();
 	//ssh_args << "-o" << "BatchMode=yes";
 	ssh_args << "-o" << "ConnectTimeout=30";
-	ssh_args << "-o" << "ServerAliveInterval=60";
+	if(server_alive_interval >= 0) ssh_args << "-o" << QString("ServerAliveInterval=%1").arg(server_alive_interval);
 	ssh_args << "-o" << "StrictHostKeyChecking=yes";
 	if(!known_hosts.isEmpty()) {
 		temp_known_hosts_file = new QTemporaryFile;
@@ -104,6 +105,10 @@ void ExternalSSHClient::set_known_hosts(const QStringList &list) {
 
 void ExternalSSHClient::set_identify_file(const QString &path) {
 	identify_file = path;
+}
+
+void ExternalSSHClient::set_server_alive_interval(int v) {
+	server_alive_interval = v;
 }
 
 void ExternalSSHClient::setenv(const QString &name, const QString &value) {

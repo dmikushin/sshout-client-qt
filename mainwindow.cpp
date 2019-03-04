@@ -521,6 +521,8 @@ void MainWindow::print_error(quint32 error_code, const QString &error_message) {
 }
 
 bool MainWindow::apply_ssh_config() {
+	// ServerAliveInterval must be less than 60 to make sense, due to a timer for send_request_online_users
+	ssh_client->set_server_alive_interval(20);	// TODO: make it configurable
 	if(use_internal_ssh_library || config->value("UseSeparateKnownHosts", false).toBool()) {
 		QStringList known_hosts = config->value("KnownHosts").toStringList();
 		known_hosts.removeAll(QString());
