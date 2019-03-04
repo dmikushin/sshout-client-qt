@@ -166,7 +166,7 @@ void ConnectionWindow::start_main_window() {
 }
 
 void ConnectionWindow::remote_host_name_change_event(int index) {
-	if(index < 0 || index > server_list.count()) return;
+	if(index < 0 || index >= server_list.count()) return;
 	ServerInformation info = server_list[index].value<ServerInformation>();
 	if(ui->remote_host_comboBox->currentText() != info.host) return;
 	ui->remote_port_lineEdit->setText(QString::number(info.port));
