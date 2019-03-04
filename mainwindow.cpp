@@ -311,29 +311,13 @@ void MainWindow::print_image(const QByteArray &data, QByteArray &file_name_buffe
 }
 
 void MainWindow::print_tag(const QString &time, const QString &from, const QString &to) {
-	QTextFormat fmt;
-	QColor precol = ui->chat_area->textColor();
-
-	if(!my_user_name.isEmpty() && from == my_user_name) {
-		ui->chat_area->setTextColor(QColor(0x39, 0xB5, 0x4A));
+	QString from_color = (!my_user_name.isEmpty() && from == my_user_name) ? "green" : "blue";
+	if(to.isEmpty() || to == "GLOBAL") {
+		ui->chat_area->insertHtml(QString("<font color=\"%1\">%2</font>  ").arg(from_color).arg(from));
 	} else {
-		ui->chat_area->setTextColor(QColor(0x34, 0x65, 0xA4));
+		QString to_color = (!my_user_name.isEmpty() && to == my_user_name) ? "green" : "blue";
+		ui->chat_area->insertHtml(tr("<font color=\"%1\">%2</font> to <font color=\"%3\">%4</font>  ").arg(from_color).arg(from).arg(to_color).arg(to));
 	}
-	ui->chat_area->insertPlainText(from);
-	ui->chat_area->setTextColor(precol);
-
-	if(!to.isEmpty() && to != "GLOBAL") {
-		ui->chat_area->insertPlainText(tr(" to "));	// XXX: not friendly to translators
-		if(!my_user_name.isEmpty() && to == my_user_name) {
-			ui->chat_area->setTextColor(QColor(0x39, 0xB5, 0x4A));
-		} else {
-			ui->chat_area->setTextColor(QColor(0x34, 0x65, 0xA4));
-		}
-		ui->chat_area->insertPlainText(to);
-		ui->chat_area->setTextColor(precol);
-	}
-
-	ui->chat_area->insertPlainText("  ");
 	ui->chat_area->insertPlainText(time);
 	ui->chat_area->insertPlainText("\n");
 }
