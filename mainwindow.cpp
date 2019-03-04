@@ -800,7 +800,9 @@ void MainWindow::set_send_message_on_enter(bool v) {
 void MainWindow::settings() {
 	SettingsDialog d(this, config);
 	if(!d.exec()) return;
-	apply_ssh_config();
+	if(!apply_ssh_config()) {
+		QMessageBox::warning(this, tr("Configuration Error"), tr("You won't be able to connect to SSH server again, until SSH configuration was corrected"));
+	}
 	apply_chat_area_config();
 }
 
