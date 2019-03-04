@@ -114,6 +114,10 @@ void ExternalSSHClient::unsetenv(const QString &name) {
 	environment.remove(name);
 }
 
+void ExternalSSHClient::defaultenv() {
+	environment = QProcess::systemEnvironment().toSet();
+}
+
 void ExternalSSHClient::set_reconnect_interval(int v) {
 	reconnect_interval = v;
 }

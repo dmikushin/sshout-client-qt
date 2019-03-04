@@ -79,6 +79,7 @@ private:
 	void update_user_list(const UserInfo *, unsigned int);
 	void update_user_state(const QString &, quint8);
 	void print_error(quint32, const QString &);
+	bool apply_ssh_config();
 	void apply_chat_area_config();
 	void update_window_title();
 	void reset_unread_message_count();

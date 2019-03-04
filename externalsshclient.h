@@ -35,6 +35,7 @@ public:
 	void set_identify_file(const QString &);
 	void setenv(const QString &, const QString &);
 	void unsetenv(const QString &);
+	void defaultenv();
 	void set_reconnect_interval(int);
 	SSHState state();
 	bool is_connected();

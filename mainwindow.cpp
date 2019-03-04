@@ -90,31 +90,14 @@ MainWindow::MainWindow(QWidget *parent, QSettings *config, const QString &host, 
 	ssh_user = DEFAULT_SSH_USER_NAME;
 	connect(ssh_client, SIGNAL(state_changed(SSHClient::SSHState)), SLOT(ssh_state_change(SSHClient::SSHState)));
 	connect(ssh_client, SIGNAL(readyRead()), SLOT(read_ssh()));
-	if(use_internal_ssh_library || config->value("UseSeparateKnownHosts", false).toBool()) {
-		QStringList known_hosts = config->value("KnownHosts").toStringList();
-		known_hosts.removeAll(QString());
-		if(known_hosts.isEmpty()) {
-			QMessageBox::critical(this, tr("Configuration Error"), use_internal_ssh_library ?
-				tr("Configured to use internal SSH library; but known host list is empty") :
-				tr("Configured to use separate known host list; but that list is empty."));
-			change_server();
-			QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
-			return;
-		}
-		known_hosts.removeDuplicates();
-		ssh_client->set_known_hosts(known_hosts);
+	if(!apply_ssh_config()) {
+		change_server();
+		QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+		return;
 	}
 	if(!use_internal_ssh_library) {
 		ExternalSSHClient *extern_ssh_client = (ExternalSSHClient *)ssh_client;
 		extern_ssh_client->register_ready_read_stderr_slot(this, SLOT(read_ssh_stderr()));
-		QString args = config->value("SSHArgs").toString();
-		if(!args.isEmpty()) extern_ssh_client->set_extra_args(args.split(' '));
-		config->beginGroup("SSHEnvironment");
-		QStringList key_list = config->allKeys();
-		foreach(const QString &key, key_list) {
-			extern_ssh_client->setenv(key, config->value(key).toString());
-		}
-		config->endGroup();
 	}
 	send_message_on_enter = config->value("UseEnterToSendMessage", true).toBool();
 	ui->action_press_enter_to_send_message->setChecked(send_message_on_enter);
@@ -553,6 +536,36 @@ void MainWindow::print_error(quint32 error_code, const QString &error_message) {
 	ui->chat_area->appendPlainText(tr("Error from server: %1").arg(error_message) + "\n");
 }
 
+bool MainWindow::apply_ssh_config() {
+	if(use_internal_ssh_library || config->value("UseSeparateKnownHosts", false).toBool()) {
+		QStringList known_hosts = config->value("KnownHosts").toStringList();
+		known_hosts.removeAll(QString());
+		if(known_hosts.isEmpty()) {
+			QMessageBox::critical(this, tr("Configuration Error"), use_internal_ssh_library ?
+				tr("Configured to use internal SSH library; but known host list is empty") :
+				tr("Configured to use separate known host list; but that list is empty."));
+			return false;
+		}
+		known_hosts.removeDuplicates();
+		ssh_client->set_known_hosts(known_hosts);
+	} else {
+		ssh_client->set_known_hosts(QStringList());
+	}
+	if(!use_internal_ssh_library) {
+		ExternalSSHClient *extern_ssh_client = (ExternalSSHClient *)ssh_client;
+		QString args = config->value("SSHArgs").toString();
+		extern_ssh_client->set_extra_args(args.isEmpty() ? QStringList() : args.split(' '));
+		config->beginGroup("SSHEnvironment");
+		extern_ssh_client->defaultenv();
+		QStringList key_list = config->allKeys();
+		foreach(const QString &key, key_list) {
+			extern_ssh_client->setenv(key, config->value(key).toString());
+		}
+		config->endGroup();
+	}
+	return true;
+}
+
 void MainWindow::apply_chat_area_config() {
 	//qDebug("function: MainWindow::apply_chat_area_config()");
 	//qDebug() << ui->chat_area->currentCharFormat().font() << ui->chat_area->currentCharFormat().fontPointSize();
@@ -620,7 +633,7 @@ void MainWindow::read_ssh() {
 		stream >> packet_type;
 		switch(packet_type) {
 			case SSHOUT_API_PASS:
-				qDebug("SSHOUT_API_PASS received");
+				//qDebug("SSHOUT_API_PASS received");
 				if(data.mid(1, 6) != QString("SSHOUT")) {
 					qWarning("Magic mismatch");
 					ui->chat_area->appendPlainText(tr("Magic mismatch"));
@@ -655,7 +668,7 @@ void MainWindow::read_ssh() {
 				timer->start();
 				break;
 			case SSHOUT_API_ONLINE_USERS_INFO:
-				qDebug("SSHOUT_API_ONLINE_USERS_INFO received");
+				//qDebug("SSHOUT_API_ONLINE_USERS_INFO received");
 				{
 					quint16 my_id;
 					stream >> my_id;
@@ -684,7 +697,7 @@ void MainWindow::read_ssh() {
 				}
 				break;
 			case SSHOUT_API_RECEIVE_MESSAGE:
-				qDebug("SSHOUT_API_RECEIVE_MESSAGE received");
+				//qDebug("SSHOUT_API_RECEIVE_MESSAGE received");
 				{
 					quint64 time;
 					stream >> time;
@@ -710,13 +723,13 @@ void MainWindow::read_ssh() {
 					stream >> msg_type;
 					quint32 msg_len;
 					stream >> msg_len;
-					qDebug() << data.length() << time << from_user_len << to_user_len << msg_type;
+					//qDebug() << data.length() << time << from_user_len << to_user_len << msg_type;
 					if(1 + 8 + 1 + (int)from_user_len + 1 + (int)to_user_len + 1 + 4 + (int)msg_len > data.length()) {
 						qWarning("malformed SSHOUT_API_RECEIVE_MESSAGE packet: msg_len %hhu too large", msg_len);
 						//ssh_client->disconnect();
 						return;
 					}
-					qDebug() << msg_len;
+					//qDebug() << msg_len;
 					print_message(QDateTime::fromTime_t(time),
 						      QString::fromUtf8(from_user, from_user_len),
 						      QString::fromUtf8(to_user, to_user_len),
@@ -725,9 +738,9 @@ void MainWindow::read_ssh() {
 				}
 				break;
 			case SSHOUT_API_USER_STATE_CHANGE:
-				qDebug("SSHOUT_API_USER_STATE_CHANGE received");
+				//qDebug("SSHOUT_API_USER_STATE_CHANGE received");
 				{
-					qDebug("length: %d", data.length());
+					//qDebug("length: %d", data.length());
 					quint8 state;
 					stream >> state;
 					quint8 user_name_len;
@@ -741,7 +754,7 @@ void MainWindow::read_ssh() {
 				}
 				break;
 			case SSHOUT_API_ERROR:
-				qDebug("SSHOUT_API_ERROR received");
+				//qDebug("SSHOUT_API_ERROR received");
 				{
 					quint32 error_code;
 					stream >> error_code;
@@ -756,7 +769,7 @@ void MainWindow::read_ssh() {
 				}
 				break;
 			case SSHOUT_API_MOTD:
-				qDebug("SSHOUT_API_MOTD received");
+				//qDebug("SSHOUT_API_MOTD received");
 				quint32 length;
 				stream >> length;
 				if(length > (unsigned int)data.length() - 1 - 4) {
@@ -798,6 +811,7 @@ void MainWindow::set_send_message_on_enter(bool v) {
 void MainWindow::settings() {
 	SettingsDialog d(this, config);
 	if(!d.exec()) return;
+	apply_ssh_config();
 	apply_chat_area_config();
 }
 
@@ -898,7 +912,7 @@ void MainWindow::reset_unread_message_count() {
 }
 
 void MainWindow::reset_unread_message_count_from_chat_area_vertical_scroll_bar(int scroll_bar_value) {
-	qDebug("slot: MainWindow::reset_unread_message_count_from_chat_area_vertical_scroll_bar(%d)", scroll_bar_value);
+	//qDebug("slot: MainWindow::reset_unread_message_count_from_chat_area_vertical_scroll_bar(%d)", scroll_bar_value);
 	if(scroll_bar_value < ui->chat_area->verticalScrollBar()->maximum()) return;
 	if(!isActiveWindow()) return;
 	reset_unread_message_count();
