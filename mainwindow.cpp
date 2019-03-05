@@ -314,11 +314,11 @@ void MainWindow::print_image(const QByteArray &data, QByteArray &file_name_buffe
 }
 
 void MainWindow::print_tag(const QString &time, const QString &from, const QString &to) {
-	QString from_color = (!my_user_name.isEmpty() && from == my_user_name) ? "green" : "blue";
+	QString from_color = (!my_user_name.isEmpty() && from == my_user_name) ? "LimeGreen" : "RoyalBlue";
 	if(to.isEmpty() || to == "GLOBAL") {
 		ui->chat_area->insertHtml(QString("<font color=\"%1\">%2</font>  ").arg(from_color).arg(from));
 	} else {
-		QString to_color = (!my_user_name.isEmpty() && to == my_user_name) ? "green" : "blue";
+		QString to_color = (!my_user_name.isEmpty() && to == my_user_name) ? "LimeGreen" : "RoyalBlue";
 		ui->chat_area->insertHtml(tr("<font color=\"%1\">%2</font> to <font color=\"%3\">%4</font>  ").arg(from_color).arg(from).arg(to_color).arg(to));
 	}
 	ui->chat_area->insertPlainText(time);
@@ -801,7 +801,7 @@ void MainWindow::settings() {
 	SettingsDialog d(this, config);
 	if(!d.exec()) return;
 	if(!apply_ssh_config()) {
-		QMessageBox::warning(this, tr("Configuration Error"), tr("You won't be able to connect to SSH server again, until SSH configuration was corrected"));
+		QMessageBox::warning(this, tr("Configuration Error"), tr("You won't be able to connect to SSH server again, until SSH configuration was corrected."));
 	}
 	apply_chat_area_config();
 }
