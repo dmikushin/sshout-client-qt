@@ -71,6 +71,12 @@ MainWindow::MainWindow(QWidget *parent, QSettings *config, const QString &host, 
 {
 	ready = false;
 	ui->setupUi(this);
+	QFont font = ui->checkBox_private_message->font();
+	int point_size = font.pointSize();
+	if(point_size > 6) {
+		font.setPointSize(point_size - 1);
+		ui->checkBox_private_message->setFont(font);
+	}
 	this->config = config;
 	//setMouseTracking(true);
 #ifdef HAVE_OPENSSH_LIBRARY
