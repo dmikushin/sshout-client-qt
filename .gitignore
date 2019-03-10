@@ -2,5 +2,3 @@
 *.app
 Makefile
 .qmake.stash 
-translations/*.qm
-
