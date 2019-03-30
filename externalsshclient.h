@@ -80,6 +80,7 @@ private:
 private slots:
 	void reconnect();
 	void from_process_state_change(QProcess::ProcessState);
+	void from_process_error(QProcess::ProcessError);
 	void from_process_started();
 	void from_process_finished(int);
 	void from_process_ready_read();

@@ -12,6 +12,9 @@ public:
 		AUTHENTICATING,
 		AUTHENTICATED
 	};
+	enum SSHError {
+		SSH_UNKNOWN_ERROR
+	};
 
 	SSHClient(QObject * = NULL);
 	virtual bool connect(const QString &, quint16, const QString &, const QString & = QString()) = 0;
@@ -27,6 +30,7 @@ signals:
 	void state_changed(SSHClient::SSHState);
 	void connected();
 	void disconnected(int);
+	void error(SSHError);
 	//void readyRead();
 };
 

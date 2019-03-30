@@ -28,6 +28,7 @@ ExternalSSHClient::ExternalSSHClient(QObject *parent, const QString &ssh_program
 	reconnect_interval = -1;
 	temp_known_hosts_file = NULL;
 	QObject::connect(ssh_process, SIGNAL(stateChanged(QProcess::ProcessState)), SLOT(from_process_state_change(QProcess::ProcessState)));
+	QObject::connect(ssh_process, SIGNAL(error(QProcess::ProcessError)), SLOT(from_process_error(QProcess::ProcessError)));
 	QObject::connect(ssh_process, SIGNAL(started()), SLOT(from_process_started()));
 	QObject::connect(ssh_process, SIGNAL(finished(int)), SLOT(from_process_finished(int)));
 	QObject::connect(ssh_process, SIGNAL(readyReadStandardOutput()), SLOT(from_process_ready_read()));
@@ -62,6 +63,7 @@ bool ExternalSSHClient::connect(const QString &host, quint16 port, const QString
 	if(server_alive_interval >= 0) ssh_args << "-o" << QString("ServerAliveInterval=%1").arg(server_alive_interval);
 	ssh_args << "-o" << "StrictHostKeyChecking=yes";
 	if(!known_hosts.isEmpty()) {
+		delete temp_known_hosts_file;
 		temp_known_hosts_file = new QTemporaryFile;
 		temp_known_hosts_file->open();
 		foreach(const QString &i, known_hosts) {
@@ -232,11 +234,19 @@ void ExternalSSHClient::from_process_state_change(QProcess::ProcessState proc_st
 	}
 }
 
+void ExternalSSHClient::from_process_error(QProcess::ProcessError e) {
+	if(e != QProcess::FailedToStart) return;
+	delete temp_known_hosts_file;
+	temp_known_hosts_file = NULL;
+	emit error(SSH_UNKNOWN_ERROR);
+}
+
 void ExternalSSHClient::from_process_started() {
 	emit connected();
 }
 
 void ExternalSSHClient::from_process_finished(int status) {
+	//qDebug("slot: ExternalSSHClient::from_process_finished(%d)", status);
 	delete temp_known_hosts_file;
 	temp_known_hosts_file = NULL;
 	emit disconnected(status);
