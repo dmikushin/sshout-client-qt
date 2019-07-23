@@ -362,8 +362,8 @@
         <translation>剪贴板中没有图片可用</translation>
     </message>
     <message>
-        <source>Message to %1:</source>
-        <translation>给 %1 的消息：</translation>
+        <source>Message to &lt;b&gt;%1&lt;/b&gt;:</source>
+        <translation>给 &lt;b&gt;%1&lt;/b&gt; 的消息：</translation>
     </message>
 </context>
 <context>

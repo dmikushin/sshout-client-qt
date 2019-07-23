@@ -1005,13 +1005,13 @@ void MainWindow::send_image_from_clipboard() {
 void MainWindow::select_user(const QString &name) {
 	ui->checkBox_private_message->setEnabled(true);
 	if(!ui->checkBox_private_message->isChecked()) return;
-	ui->label_message_to->setText(tr("Message to %1:").arg(name));
+	ui->label_message_to->setText(tr("Message to <b>%1</b>:").arg(name));
 }
 
 void MainWindow::set_send_private_message(bool v) {
 	QListWidgetItem *item;
 	if(v && (item = ui->listWidget_online_users->currentItem())) {
-		ui->label_message_to->setText(tr("Message to %1:").arg(item->text()));
+		ui->label_message_to->setText(tr("Message to <b>%1</b>:").arg(item->text()));
 	} else {
 		ui->label_message_to->setText(tr("Broadcast Message:"));
 	}
