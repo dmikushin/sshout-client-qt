@@ -186,8 +186,10 @@ void MainWindow::keyPressEvent(QKeyEvent *e) {
 			case Qt::Key_Return:
 				show_tip = false;
 				if(send_message_on_enter) {
-					if(control_key_pressed) ui->textEdit_message_to_send->insertPlainText("\n");
-					else send_message();
+					if(control_key_pressed) {
+						ui->textEdit_message_to_send->insertPlainText("\n");
+						ui->textEdit_message_to_send->moveCursor(QTextCursor::NoMove);
+					} else send_message();
 					ignore_key_event = true;
 				} else if(control_key_pressed) {
 					send_message();
