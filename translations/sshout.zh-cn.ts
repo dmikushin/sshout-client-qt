@@ -499,5 +499,9 @@
         <source>File %1 is not executable</source>
         <translation>文件 %1 不可执行</translation>
     </message>
+    <message>
+        <source>An error occurred in SSH client</source>
+        <translation>SSH客户端中发生了一个错误</translation>
+    </message>
 </context>
 </TS>

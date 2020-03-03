@@ -104,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent, QSettings *config, const QString &host, 
 	}
 	connect(ssh_client, SIGNAL(state_changed(SSHClient::SSHState)), SLOT(ssh_state_change(SSHClient::SSHState)));
 	connect(ssh_client, SIGNAL(readyRead()), SLOT(read_ssh()));
+	connect(ssh_client, SIGNAL(error(SSHClient::SSHError)), SLOT(ssh_error()));
 	if(!use_internal_ssh_library) {
 		ExternalSSHClient *extern_ssh_client = (ExternalSSHClient *)ssh_client;
 		extern_ssh_client->register_ready_read_stderr_slot(this, SLOT(read_ssh_stderr()));
@@ -1017,4 +1018,8 @@ void MainWindow::set_send_private_message(bool v) {
 	} else {
 		ui->label_message_to->setText(tr("Broadcast Message:"));
 	}
+}
+
+void MainWindow::ssh_error() {
+	ui->statusbar->showMessage(tr("An error occurred in SSH client"), 10000);
 }

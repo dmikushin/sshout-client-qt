@@ -115,6 +115,7 @@ private slots:
 	//void on_ssh_ready_read_stderr();
 	void read_ssh();
 	void read_ssh_stderr();
+	void ssh_error();
 	void set_send_message_on_enter(bool);
 	void settings();
 	void send_message();
