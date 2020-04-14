@@ -1,5 +1,5 @@
 /* Secure Shout Host Oriented Unified Talk
- * Copyright 2015-2018 Rivoreo
+ * Copyright 2015-2020 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -96,6 +96,7 @@ private:
 	bool ignore_key_event;
 	bool need_reconnect;
 	QTimer *timer;
+	QTimer *handshake_timer;
 	//QTemporaryFile *cache_file_allocator;
 	QDir *log_dir, *image_cache_dir;
 	QString last_message_html;
@@ -135,6 +136,7 @@ private slots:
 	//void show_about_qt();
 	void select_user(const QString &);
 	void set_send_private_message(bool);
+	void handshake_timeout_disconnect();
 };
 
 #endif // MAINWINDOW_H

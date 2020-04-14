@@ -1,5 +1,5 @@
 /* Secure Shout Host Oriented Unified Talk
- * Copyright 2015-2018 Rivoreo
+ * Copyright 2015-2020 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -134,6 +134,10 @@ MainWindow::MainWindow(QWidget *parent, QSettings *config, const QString &host, 
 	timer = new QTimer(this);
 	timer->setInterval(60000);
 	connect(timer, SIGNAL(timeout()), SLOT(send_request_online_users()));
+	handshake_timer = new QTimer(this);
+	handshake_timer->setSingleShot(true);
+	handshake_timer->setInterval(40000);
+	connect(handshake_timer, SIGNAL(timeout()), SLOT(handshake_timeout_disconnect()));
 	log_dir = new QDir(QString("%1/logs/%2").arg(config_dir()).arg(this->host));
 	if(!log_dir->mkpath("images")) {
 		qWarning("Cannot create image cache directory");
@@ -581,6 +585,7 @@ void MainWindow::ssh_state_change(SSHClient::SSHState state) {
 		case SSHClient::DISCONNECTED:
 			//ui->statusbar->showMessage(tr("Disconnected"));
 			timer->stop();
+			handshake_timer->stop();
 			if(need_reconnect) QTimer::singleShot(10000, this, SLOT(connect_ssh()));
 			break;
 		case SSHClient::CONNECTIING:
@@ -592,6 +597,7 @@ void MainWindow::ssh_state_change(SSHClient::SSHState state) {
 		case SSHClient::AUTHENTICATED:
 			ui->statusbar->showMessage(tr("Connected"));
 			send_hello();
+			handshake_timer->start();
 			break;
 	}
 }
@@ -639,6 +645,7 @@ void MainWindow::read_ssh() {
 					ssh_client->disconnect();
 					return;
 				}
+				handshake_timer->stop();
 				stream.skipRawData(6);
 				quint16 version;
 				stream >> version;
@@ -850,7 +857,7 @@ void MainWindow::open_project_page() {
 void MainWindow::show_about() {
 	QMessageBox d(this);
 	d.setWindowTitle(tr("About"));
-	d.setText("<h3>Secure Shout Host Oriented Unified Talk</h3>Copyright 2018 Rivoreo<br/><br/>" +
+	d.setText("<h3>Secure Shout Host Oriented Unified Talk</h3>Copyright 2020 Rivoreo<br/><br/>" +
 		tr("This program is free software; you are free to change and redistribute it; see the source for copying conditions.") + "<br/>" +
 		tr("There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."));
 	d.exec();
@@ -1022,4 +1029,9 @@ void MainWindow::set_send_private_message(bool v) {
 
 void MainWindow::ssh_error() {
 	ui->statusbar->showMessage(tr("An error occurred in SSH client"), 10000);
+}
+
+void MainWindow::handshake_timeout_disconnect() {
+	ui->statusbar->showMessage(tr("API handshake timed out"), 10000);
+	ssh_client->disconnect();
 }
