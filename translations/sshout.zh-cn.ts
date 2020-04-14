@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <!--	Simplified Chinese messages for SSHOUT Qt Client
-	Copyright 2015-2019 Rivoreo
+	Copyright 2015-2020 Rivoreo
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -365,6 +365,14 @@
         <source>Message to &lt;b&gt;%1&lt;/b&gt;:</source>
         <translation>给 &lt;b&gt;%1&lt;/b&gt; 的消息：</translation>
     </message>
+    <message>
+        <source>An error occurred in SSH client</source>
+        <translation>SSH客户端中发生了一个错误</translation>
+    </message>
+    <message>
+        <source>API handshake timed out</source>
+        <translation>API握手超时</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -498,10 +506,6 @@
     <message>
         <source>File %1 is not executable</source>
         <translation>文件 %1 不可执行</translation>
-    </message>
-    <message>
-        <source>An error occurred in SSH client</source>
-        <translation>SSH客户端中发生了一个错误</translation>
     </message>
 </context>
 </TS>
