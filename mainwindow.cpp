@@ -422,10 +422,10 @@ void MainWindow::send_message(const QString &to_user, quint8 message_type, const
 
 void MainWindow::send_message() {
 	qDebug("slot: MainWindow::send_message()");
+
+	if(ui->textEdit_message_to_send->document()->isEmpty()) return;
 	bool use_html = ui->action_use_html_for_sending_messages->isChecked();
 	QString message = use_html ? ui->textEdit_message_to_send->toHtml() : ui->textEdit_message_to_send->toPlainText();
-	if(message.isEmpty()) return;
-
 	QByteArray message_bytes = message.toUtf8();
 
 	ui->statusbar->showMessage(tr("Sending message"), 1000);
