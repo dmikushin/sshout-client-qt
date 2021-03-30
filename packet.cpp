@@ -15,6 +15,7 @@
 #include "packet.h"
 #include "sshout/api.h"
 #include <QtCore/QByteArray>
+#include <QtCore/QIODevice>
 #include <QtCore/QDataStream>
 
 // Need to rewrite in a class
