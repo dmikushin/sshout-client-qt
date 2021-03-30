@@ -165,7 +165,6 @@ int main(int argc, char *argv[]) {
 		load_messages_translation(language);
 	}
 	a.installTranslator(translator);
-	qsrand(time(NULL));
 	if(argc - optind == 1) {
 		QString host;
 		QString user;

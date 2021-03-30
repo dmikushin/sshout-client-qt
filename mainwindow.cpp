@@ -260,22 +260,6 @@ void MainWindow::connect_ssh() {
 	}
 }
 
-/*
-QString MainWindow::create_random_hex_string(int len) {
-	//char buffer[len * 2];
-	QByteArray buffer;
-	//buffer.resize(len * 2);
-	//int i = 0;
-	//while(i < len) {
-	while(len-- > 0) {
-		//QString::number(qrand() & 0xff, 0x10);
-		char n = qrand() & 0xff;
-		buffer.append(QByteArray(&n, 1).toHex());
-	}
-	return QString::fromLatin1(buffer);
-}
-*/
-
 void MainWindow::print_image(const QByteArray &data, QByteArray &file_name_buffer) {
 	QImage image;
 	if(!image.loadFromData(data, "JPEG")) {
