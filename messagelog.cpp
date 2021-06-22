@@ -21,11 +21,14 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QCoreApplication>
 #include <signal.h>
-#include <QtCore/QDebug>
-
+#ifdef Q_OS_BSD4
+#include <sys/sysctl.h>
+#endif
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
+
+#include <QtCore/QDebug>
 
 MessageLog::MessageLog()  {
 	//database = new QSqlDatabase;
@@ -36,7 +39,6 @@ MessageLog::MessageLog()  {
 
 static bool is_another_instance(int pid) {
 	qDebug() << QCoreApplication::applicationFilePath();
-	qDebug() << QCoreApplication::applicationName();
 #ifndef Q_OS_WIN
 	if(pid < 1) return false;
 	if(kill(pid, 0) < 0) return false;
@@ -49,13 +51,32 @@ static bool is_another_instance(int pid) {
 	}
 #endif
 
-	QString target;
+	QString path;
 #ifdef Q_OS_SOLARIS
-	QString path = QString("/proc/%1/path/a.out").arg(pid).toLocal8Bit();
-	target = QFile::symLinkTarget(path);
-	qDebug() << target;
+	path = QFile::symLinkTarget(QString("/proc/%1/path/a.out").arg(pid));
+#elif defined Q_OS_BSD4
+	size_t len;
+#ifdef KERN_PROC_PATHNAME
+	char buffer[PATH_MAX + 1];
+	len = sizeof buffer;
+	int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, pid };
+	if(sysctl(mib, 4, buffer, &len, NULL, 0) == 0 && len) {
+		path = QString::fromLocal8Bit(buffer, len - 1);
+	}
+#else
+#ifdef Q_OS_DARWIN
+#define ki_comm kp_proc.p_comm
 #endif
-	if(!target.isEmpty() && QFileInfo(target).fileName() != QFileInfo(QCoreApplication::applicationFilePath()).fileName()) {
+	struct kinfo_proc proc;
+	len = sizeof proc;
+	int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
+	if(sysctl(mib, 4, &proc, &len, NULL, 0) == 0) {
+		path = QString::fromLocal8Bit(proc.ki_comm);
+	}
+#endif
+#endif
+	qDebug() << path;
+	if(!path.isEmpty() && QFileInfo(path).fileName() != QFileInfo(QCoreApplication::applicationFilePath()).fileName()) {
 		return false;
 	}
 
