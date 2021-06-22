@@ -1,11 +1,27 @@
+/* Secure Shout Host Oriented Unified Talk
+ * Copyright 2015-2021 Rivoreo
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ */
+
 #include "messagelog.h"
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtCore/QDateTime>
 #include <QtCore/QVariant>
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QCoreApplication>
 #include <signal.h>
+#include <QtCore/QDebug>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -16,6 +32,34 @@ MessageLog::MessageLog()  {
 	//QSQLiteDriver *driver = new QSQLiteDriver;
 	//database = QSqlDatabase::addDatabase(driver);
 	database = QSqlDatabase::addDatabase("QSQLITE");
+}
+
+static bool is_another_instance(int pid) {
+	qDebug() << QCoreApplication::applicationFilePath();
+	qDebug() << QCoreApplication::applicationName();
+#ifndef Q_OS_WIN
+	if(pid < 1) return false;
+	if(kill(pid, 0) < 0) return false;
+#else
+	HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
+	// The Windows API design is shit!
+	if(handle != INVALID_HANDLE_VALUE && handle) {
+		CloseHandle(handle);
+		return false;
+	}
+#endif
+
+	QString target;
+#ifdef Q_OS_SOLARIS
+	QString path = QString("/proc/%1/path/a.out").arg(pid).toLocal8Bit();
+	target = QFile::symLinkTarget(path);
+	qDebug() << target;
+#endif
+	if(!target.isEmpty() && QFileInfo(target).fileName() != QFileInfo(QCoreApplication::applicationFilePath()).fileName()) {
+		return false;
+	}
+
+	return true;
 }
 
 bool MessageLog::open(const QString &path) {
@@ -34,14 +78,7 @@ bool MessageLog::open(const QString &path) {
 		lock_file->close();
 		if(!content.isEmpty()) {
 			int pid = content.toInt();
-#ifndef Q_OS_WIN
-			if(pid && kill(pid, 0) == 0) {
-#else
-			HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
-			// The Windows API design is shit!
-			if(handle != INVALID_HANDLE_VALUE && handle) {
-				CloseHandle(handle);
-#endif
+			if(is_another_instance(pid)) {
 				qWarning("MessageLog::open: database file is locked by process %d via lock file '%s'", pid, lock_path_ba.data());
 				return false;
 			}
