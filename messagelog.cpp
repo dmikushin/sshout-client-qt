@@ -23,6 +23,10 @@
 #include <signal.h>
 #ifdef Q_OS_BSD4
 #include <sys/sysctl.h>
+#if defined Q_OS_DARWIN && MAC_OS_X_VERSION_MIN_REQUIRED >= 1050
+#include <libproc.h>
+#define HAVE_PROC_PIDPATH
+#endif
 #endif
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -55,25 +59,33 @@ static bool is_another_instance(int pid) {
 #ifdef Q_OS_SOLARIS
 	path = QFile::symLinkTarget(QString("/proc/%1/path/a.out").arg(pid));
 #elif defined Q_OS_BSD4
-	size_t len;
-#ifdef KERN_PROC_PATHNAME
-	char buffer[PATH_MAX + 1];
-	len = sizeof buffer;
-	int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, pid };
-	if(sysctl(mib, 4, buffer, &len, NULL, 0) == 0 && len) {
-		path = QString::fromLocal8Bit(buffer, len - 1);
-	}
-#else
 #ifdef Q_OS_DARWIN
 #define ki_comm kp_proc.p_comm
 #endif
-	struct kinfo_proc proc;
-	len = sizeof proc;
-	int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
-	if(sysctl(mib, 4, &proc, &len, NULL, 0) == 0) {
-		path = QString::fromLocal8Bit(proc.ki_comm);
+	size_t len;
+	int mib[] = { CTL_KERN, KERN_PROC, 0, pid };
+#ifdef KERN_PROC_PATHNAME
+	char buffer[PATH_MAX + 1];
+	len = sizeof buffer;
+	mib[2] = KERN_PROC_PATHNAME;
+	if(sysctl(mib, 4, buffer, &len, NULL, 0) == 0 && len) {
+		path = QString::fromLocal8Bit(buffer, len - 1);
+	}
+#elif defined Q_OS_DARWIN && defined HAVE_PROC_PIDPATH
+	char buffer[PATH_MAX + 1];
+	if(proc_pidpath(pid, buffer, sizeof buffer) == 0) {
+		path = QString::fromLocal8Bit(buffer);
 	}
 #endif
+
+	if(path.isEmpty()) {
+		struct kinfo_proc proc;
+		len = sizeof proc;
+		mib[2] = KERN_PROC_PID;
+		if(sysctl(mib, 4, &proc, &len, NULL, 0) == 0) {
+			path = QString::fromLocal8Bit(proc.ki_comm);
+		}
+	}
 #endif
 	qDebug() << path;
 	if(!path.isEmpty() && QFileInfo(path).fileName() != QFileInfo(QCoreApplication::applicationFilePath()).fileName()) {
