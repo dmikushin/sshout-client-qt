@@ -32,8 +32,6 @@
 #include <windows.h>
 #endif
 
-#include <QtCore/QDebug>
-
 MessageLog::MessageLog()  {
 	//database = new QSqlDatabase;
 	//QSQLiteDriver *driver = new QSQLiteDriver;
@@ -42,7 +40,6 @@ MessageLog::MessageLog()  {
 }
 
 static bool is_another_instance(int pid) {
-	qDebug() << QCoreApplication::applicationFilePath();
 #ifndef Q_OS_WIN
 	if(pid < 1) return false;
 	if(kill(pid, 0) < 0) return false;
@@ -55,9 +52,14 @@ static bool is_another_instance(int pid) {
 	}
 #endif
 
+	QString self_path = QCoreApplication::applicationFilePath();
 	QString path;
 #ifdef Q_OS_SOLARIS
 	path = QFile::symLinkTarget(QString("/proc/%1/path/a.out").arg(pid));
+#elif defined Q_OS_LINUX
+	if(self_path.endsWith(" (deleted)")) self_path.chop(10);
+	path = QFile::symLinkTarget(QString("/proc/%1/exe").arg(pid));
+	if(path.endsWith(" (deleted)")) path.chop(10);
 #elif defined Q_OS_BSD4
 #ifdef Q_OS_DARWIN
 #define ki_comm kp_proc.p_comm
@@ -87,8 +89,7 @@ static bool is_another_instance(int pid) {
 		}
 	}
 #endif
-	qDebug() << path;
-	if(!path.isEmpty() && QFileInfo(path).fileName() != QFileInfo(QCoreApplication::applicationFilePath()).fileName()) {
+	if(!path.isEmpty() && !self_path.isEmpty() && QFileInfo(path).fileName() != QFileInfo(self_path).fileName()) {
 		return false;
 	}
 
