@@ -43,14 +43,6 @@ static bool is_another_instance(int pid) {
 #ifndef Q_OS_WIN
 	if(pid < 1) return false;
 	if(kill(pid, 0) < 0) return false;
-#else
-	HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
-	// The Windows API design is shit!
-	if(handle != INVALID_HANDLE_VALUE && handle) {
-		CloseHandle(handle);
-		return false;
-	}
-#endif
 
 	QString self_path = QCoreApplication::applicationFilePath();
 	QString path;
@@ -94,6 +86,16 @@ static bool is_another_instance(int pid) {
 	}
 
 	return true;
+#else
+	HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
+	// The Windows API design is shit!
+	if(handle != INVALID_HANDLE_VALUE && handle) {
+		CloseHandle(handle);
+		return true;
+	} else {
+		return false;
+	}
+#endif
 }
 
 bool MessageLog::open(const QString &path) {
