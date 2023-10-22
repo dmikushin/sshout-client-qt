@@ -1,5 +1,5 @@
-/* Secure Shout Host Oriented Unified Talk
- * Copyright 2015-2021 Rivoreo
+/* SSHOUT Client
+ * Copyright 2015-2023 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -104,6 +104,7 @@ bool MessageLog::open(const QString &path) {
 	//qDebug("is open ? %d", database.isOpen());
 	if(database.isOpen()) return false;
 	QByteArray lock_path_ba = path.toLocal8Bit();
+	lock_path_ba.append(".lock");
 	lock_file = new QFile(QString("%1.lock").arg(path));
 	if(lock_file->exists()) {
 		if(!lock_file->open(QFile::ReadOnly)) {
