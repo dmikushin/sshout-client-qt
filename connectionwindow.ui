@@ -72,7 +72,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="identify_label">
+      <widget class="QLabel" name="identity_label">
        <property name="text">
         <string>Identify</string>
        </property>
@@ -81,10 +81,10 @@
      <item row="1" column="1" colspan="3">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QLineEdit" name="identify_file_lineEdit"/>
+        <widget class="QLineEdit" name="identity_file_lineEdit"/>
        </item>
        <item>
-        <widget class="QPushButton" name="browse_identify_pushButton">
+        <widget class="QPushButton" name="browse_identity_pushButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -153,7 +153,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>browse_identify_pushButton</sender>
+   <sender>browse_identity_pushButton</sender>
    <signal>clicked()</signal>
    <receiver>ConnectionWindow</receiver>
    <slot>browse_identity_file()</slot>

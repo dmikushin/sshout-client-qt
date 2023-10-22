@@ -1,5 +1,5 @@
-/*
- * Copyright 2015-2018 Rivoreo
+/* SSHOUT Client
+ * Copyright 2015-2023 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -55,7 +55,7 @@ ConnectionWindow::ConnectionWindow(QWidget *parent, QSettings *config) :
 		}
 		QStringList id_list = config->value("IdentifyList").toStringList();
 		if(id_list.count() > index) {
-			ui->identify_file_lineEdit->setText(id_list[index]);
+			ui->identity_file_lineEdit->setText(id_list[index]);
 		}
 	}
 #else
@@ -70,7 +70,7 @@ ConnectionWindow::ConnectionWindow(QWidget *parent, QSettings *config) :
 		const ServerInformation &info = server_list[index].value<ServerInformation>();
 		ui->remote_host_comboBox->setCurrentIndex(index);
 		ui->remote_port_lineEdit->setText(QString::number(info.port));
-		ui->identify_file_lineEdit->setText(info.identify_file);
+		ui->identity_file_lineEdit->setText(info.identity_file);
 	}
 #endif
 	remote_host_name_change_event(ui->remote_host_comboBox->currentText());
@@ -96,7 +96,7 @@ void ConnectionWindow::browse_identity_file() {
 	d.setFileMode(QFileDialog::ExistingFile);
 	d.setOption(QFileDialog::DontUseNativeDialog);
 	if(d.exec()) {
-		ui->identify_file_lineEdit->setText(d.selectedFiles()[0]);
+		ui->identity_file_lineEdit->setText(d.selectedFiles()[0]);
 	}
 }
 
@@ -130,26 +130,29 @@ void ConnectionWindow::start_main_window() {
 			return;
 		}
 	}
-	const QString &identify_file = ui->identify_file_lineEdit->text();
-	if(identify_file.isEmpty()) {
-		QMessageBox::critical(this, tr("Check Server Information"), tr("Identify file path cannot be empty"));
-		return;
-	}
+	const QString &identity_file = ui->identity_file_lineEdit->text();
 
 	bool found = false;
 	foreach(const QVariant &i, server_list) {
 		ServerInformation info = i.value<ServerInformation>();
 		if(info.host == host) {
-			if(info.port == port && info.identify_file == identify_file) found = 1;
+			if(info.port == port && info.identity_file == identity_file) found = 1;
 			else server_list.removeOne(i);
 			break;
 		}
 	}
 	if(!found) {
+		if(identity_file.isEmpty()) {
+			int answer = QMessageBox::warning(this,
+				tr("Check Server Information"),
+				tr("Identity file isn't set. Are you sure this is correct?"),
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+			if(answer != QMessageBox::Yes) return;
+		}
 		ServerInformation info;
 		info.host = host;
 		info.port = port;
-		info.identify_file = identify_file;
+		info.identity_file = identity_file;
 		QVariant v = QVariant::fromValue<ServerInformation>(info);
 		server_list << v;
 		config->setValue("ServerList", server_list);
@@ -158,7 +161,7 @@ void ConnectionWindow::start_main_window() {
 	if(index >= 0) config->setValue("LastServerIndex", index);
 	config->setValue("AutoConnect", ui->checkBox_auto_connect->isChecked());
 	hide();
-	MainWindow *w = new MainWindow(NULL, config, host, port, identify_file);
+	MainWindow *w = new MainWindow(NULL, config, host, port, identity_file);
 	w->setAttribute(Qt::WA_DeleteOnClose);
 	w->connect_ssh();
 	w->show();
@@ -170,7 +173,7 @@ void ConnectionWindow::remote_host_name_change_event(int index) {
 	ServerInformation info = server_list[index].value<ServerInformation>();
 	if(ui->remote_host_comboBox->currentText() != info.host) return;
 	ui->remote_port_lineEdit->setText(QString::number(info.port));
-	ui->identify_file_lineEdit->setText(info.identify_file);
+	ui->identity_file_lineEdit->setText(info.identity_file);
 }
 
 void ConnectionWindow::remote_host_name_change_event(QString host_name) {

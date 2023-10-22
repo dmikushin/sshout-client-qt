@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Rivoreo
+ * Copyright 2015-2023 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -46,8 +46,8 @@ static void print_usage(const char *name) {
 	fprintf(stderr, "Usage: %s [<options>] [<host>|ssh://[<user>@]<host>[:<port>][/]]\n"
 		"Options:\n"
 		"	--port <n>, -p <n>	Specify port for host as <n>, default 22\n"
-		"	--identify-file <path>, -i <path>\n"
-		"				Specify the identify file\n"
+		"	--identity-file <path>, -i <path>\n"
+		"				Specify the identity file\n"
 		"	--style <style>		Use QStyle <style>\n",
 		name);
 }
@@ -101,13 +101,14 @@ int main(int argc, char *argv[]) {
 
 	static option long_options[] = {
 		{ "port", 1, NULL, 'p' },
+		{ "identity-file", 1, NULL, 'i' },
 		{ "identify-file", 1, NULL, 'i' },
 		{ "style", 1, NULL, 0 },
 		{ "help", 0, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 	int port = -1;
-	const char *identify_file = NULL;
+	const char *identity_file = NULL;
 	const char *style = NULL;
 	while(true) {
 		int option_index;
@@ -123,7 +124,7 @@ int main(int argc, char *argv[]) {
 				port = atoi(optarg);
 				break;
 			case 'i':
-				identify_file = optarg;
+				identity_file = optarg;
 				break;
 			case 'h':
 				print_usage(argv[0]);
@@ -176,7 +177,7 @@ int main(int argc, char *argv[]) {
 			user = url.userName();
 		} else host = QString(maybe_url);
 		if(port == -1) port = 22;
-		MainWindow w(NULL, &config, host, port, QString(identify_file));
+		MainWindow w(NULL, &config, host, port, QString(identity_file));
 		if(!user.isEmpty()) w.set_ssh_user(user);
 		w.show();
 		w.connect_ssh();
@@ -190,7 +191,7 @@ int main(int argc, char *argv[]) {
 		int index = config.value("LastServerIndex", 0).toUInt();
 		if(index < 0 || index >= server_list.count()) index = 0;
 		const ServerInformation &info = server_list[index].value<ServerInformation>();
-		MainWindow *mw = new MainWindow(NULL, &config, info.host, info.port, info.identify_file);
+		MainWindow *mw = new MainWindow(NULL, &config, info.host, info.port, info.identity_file);
 		mw->connect_ssh();
 		w = mw;
 	} else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Rivoreo
+ * Copyright 2015-2023 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -39,13 +39,7 @@ public:
 private:
 	Ui::ConnectionWindow *ui;
 	QSettings *config;
-#if 0
-	QStringList *host_list;
-	QList<QVariant> *port_list;
-	QStringList *identify_list;
-#else
 	QList<QVariant> server_list;
-#endif
 
 protected:
 	void closeEvent(QCloseEvent *);

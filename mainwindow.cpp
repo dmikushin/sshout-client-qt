@@ -1,5 +1,5 @@
-/* Secure Shout Host Oriented Unified Talk
- * Copyright 2015-2020 Rivoreo
+/* SSHOUT Client
+ * Copyright 2015-2023 Rivoreo
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -841,7 +841,7 @@ void MainWindow::open_project_page() {
 void MainWindow::show_about() {
 	QMessageBox d(this);
 	d.setWindowTitle(tr("About"));
-	d.setText("<h3>Secure Shout Host Oriented Unified Talk</h3>Copyright 2020 Rivoreo<br/><br/>" +
+	d.setText("<h3>Secure Shout Host Oriented Unified Talk</h3>Copyright 2023 Rivoreo<br/><br/>" +
 		tr("This program is free software; you are free to change and redistribute it; see the source for copying conditions.") + "<br/>" +
 		tr("There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."));
 	d.exec();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <!--	Simplified Chinese messages for SSHOUT Qt Client
-	Copyright 2015-2020 Rivoreo
+	Copyright 2015-2023 Rivoreo
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -65,8 +65,8 @@
         <translation>无效的端口号</translation>
     </message>
     <message>
-        <source>Identify file path cannot be empty</source>
-        <translation>私钥文件路径不能为空</translation>
+        <source>Identity file isn't set. Are you sure this is correct?</source>
+        <translation>未设置认证标识档案。您确定这是正确的吗？</translation>
     </message>
 </context>
 <context>
