@@ -37,8 +37,8 @@
         <translation>端口</translation>
     </message>
     <message>
-        <source>Identify</source>
-        <translation>私钥文件</translation>
+        <source>Identity</source>
+        <translation>认证标识档案</translation>
     </message>
     <message>
         <source>&amp;Auto connect</source>
@@ -49,8 +49,8 @@
         <translation>设置 (&amp;S)</translation>
     </message>
     <message>
-        <source>Choose the identity</source>
-        <translation>选择私钥文件</translation>
+        <source>Choose the identity file</source>
+        <translation>选择认证标识档案</translation>
     </message>
     <message>
         <source>Check Server Information</source>
@@ -209,7 +209,7 @@
     </message>
     <message>
         <source>Image file &apos;%1&apos; is already exist, skipping write</source>
-        <translation>图片文件“%1”已存在，已跳过保存该文件</translation>
+        <translation>图片档案“%1”已存在，已跳过保存该档案</translation>
     </message>
     <message>
         <source>[Failed to save image to disk, %1]</source>
@@ -217,7 +217,7 @@
     </message>
     <message>
         <source>[File %1 short write]</source>
-        <translation>[保存文件“%1”时中断]</translation>
+        <translation>[保存档案“%1”时中断]</translation>
     </message>
     <message>
         <source>&lt;font color=&quot;%1&quot;&gt;%2&lt;/font&gt; to &lt;font color=&quot;%3&quot;&gt;%4&lt;/font&gt;  </source>
@@ -299,7 +299,7 @@
     </message>
     <message>
         <source>Cannot load file &apos;%1&apos; as an image</source>
-        <translation>无法将文件“%1”作为图片载入</translation>
+        <translation>无法将档案“%1”作为图片载入</translation>
     </message>
     <message>
         <source>About</source>
@@ -355,7 +355,7 @@
     </message>
     <message>
         <source>Can&apos;t load &apos;%1&apos; as image: only local files are supported</source>
-        <translation>无法将“%1”作为图片载入：只支持本地的文件</translation>
+        <translation>无法将“%1”作为图片载入：只支持本地的档案</translation>
     </message>
     <message>
         <source>No image available from clipboard</source>
@@ -505,7 +505,7 @@
     </message>
     <message>
         <source>File %1 is not executable</source>
-        <translation>文件 %1 不可执行</translation>
+        <translation>档案 %1 不可执行</translation>
     </message>
 </context>
 </TS>

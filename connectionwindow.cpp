@@ -41,24 +41,6 @@ ConnectionWindow::ConnectionWindow(QWidget *parent, QSettings *config) :
 	completer->setCompletionMode(QCompleter::PopupCompletion);
 	ui->remote_host_comboBox->setCompleter(completer);
 	this->config = config;
-#if 0
-	QStringList server_list = config->value("ServerList").toStringList();
-	if(!server_list.isEmpty()) {
-		int index = config->value("LastServerIndex", 0).toInt();
-		ui->remote_host_comboBox->addItems(server_list);
-		ui->remote_host_comboBox->setCurrentIndex(index);
-		QList<QVariant> port_list = config->value("PortList").toList();
-		if(port_list.count() > index) {
-			bool ok;
-			int port = port_list[index].toInt(&ok);
-			if(ok) ui->remote_port_lineEdit->setText(QString(ok));
-		}
-		QStringList id_list = config->value("IdentifyList").toStringList();
-		if(id_list.count() > index) {
-			ui->identity_file_lineEdit->setText(id_list[index]);
-		}
-	}
-#else
 	server_list = config->value("ServerList").toList();
 	if(!server_list.isEmpty()) {
 		foreach(const QVariant &i, server_list) {
@@ -72,7 +54,6 @@ ConnectionWindow::ConnectionWindow(QWidget *parent, QSettings *config) :
 		ui->remote_port_lineEdit->setText(QString::number(info.port));
 		ui->identity_file_lineEdit->setText(info.identity_file);
 	}
-#endif
 	remote_host_name_change_event(ui->remote_host_comboBox->currentText());
 	ui->checkBox_auto_connect->setChecked(config->value("AutoConnect", false).toBool());
 }
@@ -91,7 +72,7 @@ static QString ssh_config_dir() {
 }
 
 void ConnectionWindow::browse_identity_file() {
-	QFileDialog d(this, tr("Choose the identity"), ssh_config_dir());
+	QFileDialog d(this, tr("Choose the identity file"), ssh_config_dir());
 	d.setAcceptMode(QFileDialog::AcceptOpen);
 	d.setFileMode(QFileDialog::ExistingFile);
 	d.setOption(QFileDialog::DontUseNativeDialog);
