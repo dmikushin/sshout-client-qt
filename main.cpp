@@ -97,8 +97,6 @@ bool load_messages_translation(QString language) {
 }
 
 int main(int argc, char *argv[]) {
-	qRegisterMetaTypeStreamOperators<ServerInformation>("ServerInformation");
-
 	static option long_options[] = {
 		{ "port", 1, NULL, 'p' },
 		{ "identity-file", 1, NULL, 'i' },
@@ -138,7 +136,6 @@ int main(int argc, char *argv[]) {
 
 	QApplication a(argc, argv);
 	QSettings config(config_dir() + "/" CONFIG_FILE_NAME, (QSettings::Format)1);
-	config.setIniCodec("UTF-8");
 	if(!style) {
 		QString style = config.value("Style").toString();
 		if(!style.isEmpty() && QString::compare(style, QObject::tr("Default"), Qt::CaseInsensitive)) {

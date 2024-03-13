@@ -23,7 +23,7 @@ ExternalSSHClient::ExternalSSHClient(QObject *parent, const QString &ssh_program
 	ssh_state = DISCONNECTED;
 	this->ssh_program_path = ssh_program_path;
 	ssh_process = new QProcess(this);
-	environment = ssh_process->systemEnvironment().toSet();
+    environment = QSet<QString>(ssh_process->systemEnvironment().begin(), ssh_process->systemEnvironment().end());
 	server_alive_interval = -1;
 	reconnect_interval = -1;
 	temp_known_hosts_file = NULL;
@@ -56,7 +56,7 @@ bool ExternalSSHClient::connect(const QString &host, quint16 port, const QString
 		qWarning("ExternalSSHClient::connect: invalid host name");
 		return false;
 	}
-	ssh_process->setEnvironment(environment.toList());
+	ssh_process->setEnvironment(QList<QString>(environment.begin(), environment.end()));
 	ssh_args.clear();
 	//ssh_args << "-o" << "BatchMode=yes";
 	ssh_args << "-o" << "ConnectTimeout=30";
@@ -122,7 +122,7 @@ void ExternalSSHClient::unsetenv(const QString &name) {
 }
 
 void ExternalSSHClient::defaultenv() {
-	environment = QProcess::systemEnvironment().toSet();
+    environment = QSet<QString>(QProcess::systemEnvironment().begin(), QProcess::systemEnvironment().end());
 }
 
 void ExternalSSHClient::set_reconnect_interval(int v) {

@@ -719,7 +719,7 @@ void MainWindow::read_ssh() {
 						return;
 					}
 					//qDebug() << msg_len;
-					print_message(QDateTime::fromTime_t(time),
+					print_message(QDateTime::fromSecsSinceEpoch(time),
 						      QString::fromUtf8(from_user, from_user_len),
 						      QString::fromUtf8(to_user, to_user_len),
 						      msg_type,
@@ -762,7 +762,7 @@ void MainWindow::read_ssh() {
 				quint32 length;
 				stream >> length;
 				if(length > (unsigned int)data.length() - 1 - 4) {
-					qWarning("malformed packet: member size %u out of packet size %d", length, data.length());
+					qWarning("malformed packet: member size %u out of packet size %zu", length, static_cast<size_t>(data.length()));
 					ssh_client->disconnect();
 					return;
 				}
@@ -934,7 +934,7 @@ void MainWindow::show_sessions_of_user(QListWidgetItem *item_from_list) {
 		item->setText(0, QString::number(id_and_host_name.id));
 		item->setText(1, id_and_host_name.host_name);
 		tree_widget->addTopLevelItem(item);
-		qDebug("%d", id_and_host_name.host_name.length());
+		qDebug("%zu", static_cast<size_t>(id_and_host_name.host_name.length()));
 	}
 	//tree_widget->setContextMenuPolicy(Qt::CustomContextMenu);
 	//connect(tree_widget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(show_session_list_context_menu(QPoint)));

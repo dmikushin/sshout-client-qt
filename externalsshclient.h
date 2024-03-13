@@ -24,7 +24,7 @@ class QTemporaryFile;
 class ExternalSSHClient : public SSHClient {
 	Q_OBJECT
 public:
-	ExternalSSHClient(QObject * = NULL);
+	//ExternalSSHClient(QObject * = NULL);
 	ExternalSSHClient(QObject *, const QString &);
 	~ExternalSSHClient();
 	void set_ssh_program_path(const QString &);
