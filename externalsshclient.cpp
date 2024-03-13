@@ -23,7 +23,8 @@ ExternalSSHClient::ExternalSSHClient(QObject *parent, const QString &ssh_program
 	ssh_state = DISCONNECTED;
 	this->ssh_program_path = ssh_program_path;
 	ssh_process = new QProcess(this);
-    environment = QSet<QString>(ssh_process->systemEnvironment().begin(), ssh_process->systemEnvironment().end());
+    auto systemEnvironment = ssh_process->systemEnvironment();
+    environment = QSet<QString>(systemEnvironment.begin(), systemEnvironment.end());
 	server_alive_interval = -1;
 	reconnect_interval = -1;
 	temp_known_hosts_file = NULL;
@@ -46,7 +47,7 @@ void ExternalSSHClient::set_extra_args(const QStringList &args) {
 	ssh_args_extra = args;
 }
 
-bool ExternalSSHClient::connect(const QString &host, quint16 port, const QString &user, const QString &command) {
+bool ExternalSSHClient::connect(const QString &host, qint16 port, const QString &user, const QString &command) {
 	if(ssh_program_path.isEmpty()) return false;
 	if(ssh_state != DISCONNECTED) {
 		qWarning("ExternalSSHClient::connect: current state is not disconnected");
@@ -77,7 +78,8 @@ bool ExternalSSHClient::connect(const QString &host, quint16 port, const QString
 	ssh_args << "-o" << "PasswordAuthentication=no";
 	ssh_args << "-o" << "PubkeyAuthentication=yes";
 	ssh_args << host;
-	ssh_args << "-p" << QString::number(port);
+    if (port != -1)
+	    ssh_args << "-p" << QString::number(port);
 	ssh_args << "-l" << user;
 	if(!identify_file.isEmpty()) ssh_args << "-i" << identify_file;
 	ssh_args << "-T";
@@ -122,7 +124,8 @@ void ExternalSSHClient::unsetenv(const QString &name) {
 }
 
 void ExternalSSHClient::defaultenv() {
-    environment = QSet<QString>(QProcess::systemEnvironment().begin(), QProcess::systemEnvironment().end());
+    auto systemEnvironment = QProcess::systemEnvironment();
+    environment = QSet<QString>(systemEnvironment.begin(), systemEnvironment.end());
 }
 
 void ExternalSSHClient::set_reconnect_interval(int v) {

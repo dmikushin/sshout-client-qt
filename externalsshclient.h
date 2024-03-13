@@ -29,7 +29,7 @@ public:
 	~ExternalSSHClient();
 	void set_ssh_program_path(const QString &);
 	void set_extra_args(const QStringList &);
-	bool connect(const QString &, quint16, const QString &, const QString & = QString());
+	bool connect(const QString &, qint16, const QString &, const QString & = QString());
 	void disconnect();
 	void set_known_hosts(const QStringList &);
 	void set_identify_file(const QString &);

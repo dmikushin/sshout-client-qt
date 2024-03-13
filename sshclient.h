@@ -17,7 +17,7 @@ public:
 	};
 
 	SSHClient(QObject * = NULL);
-	virtual bool connect(const QString &, quint16, const QString &, const QString & = QString()) = 0;
+	virtual bool connect(const QString &, qint16, const QString &, const QString & = QString()) = 0;
 	virtual void disconnect() = 0;
 	virtual void set_known_hosts(const QStringList &) = 0;
 	virtual void set_identify_file(const QString &) = 0;

@@ -173,7 +173,6 @@ int main(int argc, char *argv[]) {
 			if(port == -1) port = url.port();
 			user = url.userName();
 		} else host = QString(maybe_url);
-		if(port == -1) port = 22;
 		MainWindow w(NULL, &config, host, port, QString(identity_file));
 		if(!user.isEmpty()) w.set_ssh_user(user);
 		w.show();

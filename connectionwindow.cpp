@@ -98,12 +98,9 @@ void ConnectionWindow::start_main_window() {
 		QMessageBox::critical(this, tr("Check Server Information"), tr("Host name cannot be empty"));
 		return;
 	}
-	quint16 port;
+	qint16 port = -1;
 	const QString &port_str = ui->remote_port_lineEdit->text();
-	if(port_str.isEmpty()) {
-		port = 22;
-		ui->remote_port_lineEdit->setText("22");
-	} else {
+	if(!port_str.isEmpty()) {
 		bool ok;
 		port = port_str.toUInt(&ok);
 		if(!ok) {
