@@ -80,7 +80,8 @@ bool ExternalSSHClient::connect(const QString &host, qint16 port, const QString 
 	ssh_args << host;
     if (port != -1)
 	    ssh_args << "-p" << QString::number(port);
-	ssh_args << "-l" << user;
+    if (!user.isEmpty())
+	    ssh_args << "-l" << user;
 	if(!identify_file.isEmpty()) ssh_args << "-i" << identify_file;
 	ssh_args << "-T";
 	if(!ssh_args_extra.isEmpty()) ssh_args << ssh_args_extra;

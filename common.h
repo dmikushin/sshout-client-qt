@@ -8,7 +8,7 @@
 #else
 #define DEFAULT_SSH_PROGRAM_PATH "C:/Windows/System32/OpenSSH/ssh.exe"
 #endif
-#define DEFAULT_SSH_USER_NAME "sshout"
+#define DEFAULT_SSH_USER_NAME ""
 #define PROJECT_PAGE_URL "https://sourceforge.net/projects/sshout/"
 
 #endif // COMMON_H
