@@ -1,3 +1,3 @@
-[submodule "sshout"]
-	path = sshout
-	url = git://git.code.sf.net/p/sshout/daemon-code
+[submodule "ThirdParty/sshout-server"]
+	path = ThirdParty/sshout-server
+	url = https://github.com/dmikushin/sshout-server.git

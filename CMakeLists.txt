@@ -45,7 +45,7 @@ set(RESOURCES
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${FORMS} ${RESOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/sshout-server/include)
 target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Sql)
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Wno-empty-body -Wno-write-strings")
 
