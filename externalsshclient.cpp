@@ -29,7 +29,7 @@ ExternalSSHClient::ExternalSSHClient(QObject *parent, const QString &ssh_program
 	reconnect_interval = -1;
 	temp_known_hosts_file = NULL;
 	QObject::connect(ssh_process, SIGNAL(stateChanged(QProcess::ProcessState)), SLOT(from_process_state_change(QProcess::ProcessState)));
-	QObject::connect(ssh_process, SIGNAL(error(QProcess::ProcessError)), SLOT(from_process_error(QProcess::ProcessError)));
+	QObject::connect(ssh_process, SIGNAL(errorOccurred(QProcess::ProcessError)), SLOT(from_process_error(QProcess::ProcessError)));
 	QObject::connect(ssh_process, SIGNAL(started()), SLOT(from_process_started()));
 	QObject::connect(ssh_process, SIGNAL(finished(int)), SLOT(from_process_finished(int)));
 	QObject::connect(ssh_process, SIGNAL(readyReadStandardOutput()), SLOT(from_process_ready_read()));
